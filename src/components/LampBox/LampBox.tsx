@@ -1,24 +1,21 @@
-import { Box, Pressable } from "native-base";
-import { useEffect, useRef, useState } from "react";
+import { Box, Pressable, Text } from "native-base";
+import { useEffect, useState } from "react";
 import LampOn from "./Lamps/LampOn";
 import LampOff from "./Lamps/LampOff";
 
 export const LampBox = () => {
-  const [isOn, setIsOn] = useState(0);
+  const [isLampOn, setIsLampOn] = useState(false);
+  const [mac, setMac] = useState("");
 
-  var ws = new WebSocket('ws://10.0.2.2:8080');
-
+  var ws = new WebSocket("ws://10.0.2.2:8080");
 
   useEffect(() => {
-    // const serverMessagesList = [];
     ws.onopen = (e) => {
-      console.log('Connected to the server')
-      // setDisableButton(false);
+      console.log("Connected to the server");
     };
 
     ws.onclose = (e) => {
-      console.log('Disconnected. Check internet or server.')
-      // setDisableButton(true);
+      console.log("Disconnected. Check internet or server.");
     };
 
     ws.onerror = (e) => {
@@ -26,14 +23,21 @@ export const LampBox = () => {
     };
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      setIsOn(data.value);
+
+      setMac(data.code);
+
+      if (data.value === 1) {
+        setIsLampOn(true);
+      } else {
+        setIsLampOn(false);
+      }
     };
-  }, [])
+  }, []);
 
   return (
     <Pressable>
       <Box
-        bg={isOn === 0 ? "gray.300" : "yellow.50"}
+        bg={isLampOn ? "yellow.50" : "gray.300"}
         width="1/2"
         height="32"
         marginTop="10"
@@ -42,8 +46,9 @@ export const LampBox = () => {
         alignItems="center"
         justifyContent="center"
       >
-        {isOn ? <LampOn /> : <LampOff />}
+        {isLampOn ? <LampOn /> : <LampOff />}
       </Box>
+      <Text fontWeight="bold">Device MAC: {mac}</Text>
     </Pressable>
   );
 };

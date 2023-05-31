@@ -9,9 +9,7 @@ export default function App() {
         <Heading size="md" bg="indigo.500" padding="3" marginTop="16">
           App Iot
         </Heading>
-
         <LampBox />
-
       </VStack>
     </NativeBaseProvider>
   );
